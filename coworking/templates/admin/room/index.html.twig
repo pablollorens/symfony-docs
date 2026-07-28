@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{% block title %}Salas — Admin{% endblock %}
+{% block body %}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <h1 style="margin:0;">Salas de reuniones</h1>
+    <a href="{{ path('admin_room_new') }}" class="btn btn-primary">+ Nueva sala</a>
+</div>
+<div class="card" style="padding:0; overflow:hidden;">
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Capacidad</th>
+                <th>Equipamiento</th>
+                <th>Tarifa/hora</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in rooms %}
+                <tr>
+                    <td><strong>{{ room.name }}</strong></td>
+                    <td>{{ room.capacity }} personas</td>
+                    <td>
+                        {% set labels = {'tv': 'TV', 'whiteboard': 'Pizarra', 'projector': 'Proyector'} %}
+                        {% for item in room.equipment %}
+                            <span class="badge badge-gray">{{ labels[item] ?? item }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>€{{ room.hourlyRate }}</td>
+                    <td>
+                        <div class="actions">
+                            <a href="{{ path('admin_room_edit', {id: room.id}) }}" class="btn btn-secondary">Editar</a>
+                            <form method="post" action="{{ path('admin_room_delete', {id: room.id}) }}" onsubmit="return confirm('¿Eliminar sala?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ room.id) }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No hay salas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

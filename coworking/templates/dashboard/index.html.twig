@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+{% block title %}Dashboard — CoWorking Space{% endblock %}
+{% block body %}
+<div class="grid-2">
+    <div>
+        <div class="card">
+            <h1>Mis Reservas</h1>
+
+            <h2>Activas</h2>
+            {% if active_bookings is empty %}
+                <p style="color: var(--text-muted); font-size: 0.9rem;">No tienes reservas activas.</p>
+            {% else %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sala</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in active_bookings %}
+                            <tr>
+                                <td>{{ b.room.name }}</td>
+                                <td>{{ b.startAt|date('d/m/Y H:i') }}</td>
+                                <td>{{ b.endAt|date('d/m/Y H:i') }}</td>
+                                <td>€{{ b.totalCost }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
+            <div style="margin-top: 1.5rem;">
+                <h2>Historial</h2>
+                {% if past_bookings is empty %}
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Sin historial.</p>
+                {% else %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sala</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in past_bookings %}
+                                <tr>
+                                    <td>{{ b.room.name }}</td>
+                                    <td>{{ b.startAt|date('d/m/Y') }}</td>
+                                    <td>€{{ b.totalCost }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="card">
+            <h2>Gasto del mes</h2>
+            <p style="font-size: 2.5rem; font-weight: 700; color: var(--primary);">€{{ monthly_total }}</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">
+                {{ 'now'|date('F Y') }}
+            </p>
+        </div>
+        <div class="card">
+            <a href="{{ path('app_booking_new') }}" class="btn btn-primary">+ Nueva Reserva</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
